@@ -309,3 +309,30 @@ TEST(Mujoco, R1LipmWalksAndTurns)
   EXPECT_EQ(g.state().mode, "locomotion_lipm");
   EXPECT_GT(truth(g).position.z(), 0.6);
 }
+
+TEST(Mujoco, R1Dex3ModelStandsAndWalks)
+{
+  if (!r1_assets()) {
+    GTEST_SKIP() << "gaitos_description was built with GAITOS_FETCH_ASSETS=OFF";
+  }
+  const std::string share = "package://gaitos_description/robots/r1_description/";
+  auto files = testutil::robot_files(std::string(GAITOS_SOURCE_DIR), "r1",
+      {"gaitos_mujoco/params/r1_mujoco.yaml"});
+  files.push_back(testutil::overrides(
+      "robot:\n  urdf: " + share + "urdf/r1_dex3.urdf\n"
+      "hardware:\n  model: " + share + "mjcf/scene_dex3.xml"));
+  Gaitos g;
+  g.configure(testutil::make_params(files));
+  ASSERT_TRUE(g.start());
+  EXPECT_NEAR(g.model()->tree().mass(), 30.53, 0.05);   // with the hands
+  run(g, 2.5);
+  EXPECT_EQ(g.state().mode, "stand_up");
+  EXPECT_GT(truth(g).position.z(), 0.6);
+
+  // Walking with the weight of the hands (the LIPM controller balances it)
+  request(g, "locomotion_lipm");
+  const Eigen::Vector3d start = truth(g).position;
+  run(g, 6.0, [&g]() {g.set_twist({0.15, 0.0, 0.0}, Eigen::Vector3d::Zero());});
+  EXPECT_GT((truth(g).position - start).x(), 0.3);
+  EXPECT_LT(tilt_angle(truth(g).orientation), 0.2);
+}

@@ -7,7 +7,8 @@ project(gaitos_description)
 find_package(ament_cmake REQUIRED)
 
 install(DIRECTORY robots launch rviz DESTINATION share/${PROJECT_NAME}
-  PATTERN "meshes" EXCLUDE PATTERN "assets" EXCLUDE)   # the assets come from FetchContent
+  PATTERN "meshes" EXCLUDE PATTERN "assets" EXCLUDE
+  PATTERN "meshes_dex3" EXCLUDE)   # the assets come from FetchContent
 install(PROGRAMS scripts/make_gazebo_urdf.py scripts/make_mjcf.py scripts/dae_to_obj.py
   DESTINATION lib/${PROJECT_NAME})
 
@@ -48,6 +49,13 @@ if(GAITOS_FETCH_ASSETS)
     endif()
     install(DIRECTORY ${from}/ DESTINATION ${to})
   endwhile()
+  # R1 with Dex3-1 hands (mjcf/r1_dex3.xml, urdf/r1_dex3.urdf): its own meshes (stock colours,
+  # clipped wrists) plus the Unitree R1 meshes above and the G1 hand meshes
+  install(DIRECTORY robots/r1_description/mjcf/meshes_dex3/ DESTINATION ${ROBOTS}/r1_description/mjcf/meshes
+    PATTERN "LICENSE.md" EXCLUDE)
+  install(DIRECTORY ${UROS}/g1_description/meshes/ DESTINATION ${ROBOTS}/r1_description/mjcf/meshes
+    FILES_MATCHING PATTERN "*_hand_*_link.STL")
+
   install(FILES ${unitree_ros_SOURCE_DIR}/LICENSE DESTINATION share/${PROJECT_NAME}/licenses
     RENAME unitree_ros.LICENSE)
   install(FILES ${unitree_mujoco_SOURCE_DIR}/LICENSE DESTINATION share/${PROJECT_NAME}/licenses

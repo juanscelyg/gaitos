@@ -76,12 +76,34 @@ r1_gesture) in `/r1`; the gaitos node is in `/gaitos`. unitree_r1 asks for at le
 LIPM caps it at 0.15 m/s. `arm_sdk:=true` adds the arms (`arm_sdk`, FSM 816 while held) and
 `dex3:=true` kinematic Dex3-1 hands, see [Vendor interfaces](../emulators.md).
 
-## 6. Known issues
+## 6. The R1 with Dex3-1 hands
+
+`gaitos_description` also has `mjcf/r1_dex3.xml` (with `mjcf/scene_dex3.xml`) and
+`urdf/r1_dex3.urdf`: the Dex3-1 hands of the unitree_ros G1 URDF on
+the R1 wrists, with their joints, masses (0.7 kg each) and meshes; the R1 wrist mesh is clipped
+where the stock fist starts. The URDF has each hand as one rigid body, so the controllers of
+gaitos know its weight. The finger joints are held where they start (`hold_gains`).
+
+The model also has the colours of the stock R1: each visual mesh is cut into one mesh per
+material (`mjcf/meshes_dex3`), by CAD part and by position on the part, and the collision geoms move
+to group 3 (hidden). Visual only; the physics is the same.
+
+```yaml
+robot:
+  urdf: package://gaitos_description/robots/r1_description/urdf/r1_dex3.urdf
+hardware:
+  model: package://gaitos_description/robots/r1_description/mjcf/scene_dex3.xml
+```
+
+With 1.4 kg more at the wrists the stance controller of `balance_stand` (a PD of the stand pose,
+no balance feedback) tips the R1 over its toes; `locomotion_lipm` stands and walks with them.
+
+## 7. Known issues
 
 - `squat` → `stand_up` falls: the interpolation between the two postures tips the robot.
   Go through `balance_stand` or `damp` + `stand_up` with the robot held.
 
-## 7. Remake the clips
+## 8. Remake the clips
 
 ```bash
 docs/tools/record_mujoco.sh r1 docs/media/r1_mujoco_walk.gif 0 15 "--distance 2.3 --azimuth 135 --elevation -12" \
