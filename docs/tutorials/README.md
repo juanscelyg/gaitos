@@ -9,7 +9,7 @@ of the simulation, known issues and how the clips were made.
 | Robot | MuJoCo | Gazebo | Real robot |
 |---|---|---|---|
 | **Go2** (Unitree quadruped) | [Go2 in MuJoCo](go2_mujoco.md): trot, convex MPC, postures, SportClient | [Go2 in Gazebo](go2_gazebo.md) | [Go2 real and DDS simulator](go2_real.md) |
-| **R1** (Unitree humanoid) | [R1 in MuJoCo](r1_mujoco.md): ZMP / LIPM walking, postures, unitree_r1 | [R1 in Gazebo](r1_gazebo.md) | [R1 real](r1_real.md) |
+| **R1** (Unitree humanoid) | [R1 in MuJoCo](r1_mujoco.md): ZMP / LIPM walking, postures, Dex3-1 hands, unitree_r1 | [R1 in Gazebo](r1_gazebo.md) | [R1 real](r1_real.md) |
 | **NAO** (SoftBank / Aldebaran) | [NAO in MuJoCo](nao_mujoco.md) (with its meshes): walking, joints from outside, naoqi_driver | [NAO in Gazebo](nao_gazebo.md) (with its meshes) | — (no NAOqi / LoLA backend yet) |
 
 | | | |

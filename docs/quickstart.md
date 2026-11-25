@@ -46,7 +46,8 @@ ros2 topic echo /go2/status
 ```
 
 `robot:=r1` starts the R1 standing; a `cmd_vel` in `balance_stand` starts the ZMP / LIPM
-walking (`locomotion_lipm`).
+walking (`locomotion_lipm`). `robot:=r1 model:=dex3` is the R1 with its Dex3-1 hands and stock
+colours ([R1 in MuJoCo](tutorials/r1_mujoco.md#6-the-r1-with-dex3-1-hands)).
 
 ## Gazebo
 

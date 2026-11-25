@@ -315,12 +315,9 @@ TEST(Mujoco, R1Dex3ModelStandsAndWalks)
   if (!r1_assets()) {
     GTEST_SKIP() << "gaitos_description was built with GAITOS_FETCH_ASSETS=OFF";
   }
-  const std::string share = "package://gaitos_description/robots/r1_description/";
+  // r1_dex3_mujoco.yaml: urdf/r1_dex3.urdf, srdf/r1_dex3.srdf and mjcf/scene_dex3.xml
   auto files = testutil::robot_files(std::string(GAITOS_SOURCE_DIR), "r1",
-      {"gaitos_mujoco/params/r1_mujoco.yaml"});
-  files.push_back(testutil::overrides(
-      "robot:\n  urdf: " + share + "urdf/r1_dex3.urdf\n"
-      "hardware:\n  model: " + share + "mjcf/scene_dex3.xml"));
+      {"gaitos_mujoco/params/r1_mujoco.yaml", "gaitos_mujoco/params/r1_dex3_mujoco.yaml"});
   Gaitos g;
   g.configure(testutil::make_params(files));
   ASSERT_TRUE(g.start());
@@ -329,10 +326,16 @@ TEST(Mujoco, R1Dex3ModelStandsAndWalks)
   EXPECT_EQ(g.state().mode, "stand_up");
   EXPECT_GT(truth(g).position.z(), 0.6);
 
-  // Walking with the weight of the hands (the LIPM controller balances it)
-  request(g, "locomotion_lipm");
+  // balance_stand (FSM 811 of the emulator) holds with the stand pose of r1_dex3.srdf
+  request(g, "balance_stand");
+  run(g, 4.0);
+  EXPECT_EQ(g.state().mode, "balance_stand");
+  EXPECT_LT(tilt_angle(truth(g).orientation), 0.1);
+
+  // and a twist walks from there, with the weight of the hands (the first ~2 s start the gait)
   const Eigen::Vector3d start = truth(g).position;
-  run(g, 6.0, [&g]() {g.set_twist({0.15, 0.0, 0.0}, Eigen::Vector3d::Zero());});
+  run(g, 8.0, [&g]() {g.set_twist({0.15, 0.0, 0.0}, Eigen::Vector3d::Zero());});
+  EXPECT_EQ(g.state().mode, "locomotion_lipm");
   EXPECT_GT((truth(g).position - start).x(), 0.3);
   EXPECT_LT(tilt_angle(truth(g).orientation), 0.2);
 }

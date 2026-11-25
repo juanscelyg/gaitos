@@ -1,0 +1,12 @@
+# R1 with Dex3-1 hands and the stock colours in MuJoCo, on top of r1_mujoco.yaml:
+#   ros2 launch gaitos_mujoco sim.launch.py robot:=r1 model:=dex3
+# (the launch also gives gaitos and robot_state_publisher urdf/r1_dex3.urdf, the hands as rigid
+# bodies with their 0.7 kg each, and srdf/r1_dex3.srdf, a stand pose for that weight). The finger
+# joints of the model are held where they start.
+/**:
+  ros__parameters:
+    robot:
+      urdf: package://gaitos_description/robots/r1_description/urdf/r1_dex3.urdf
+      srdf: package://gaitos_description/robots/r1_description/srdf/r1_dex3.srdf
+    hardware:
+      model: package://gaitos_description/robots/r1_description/mjcf/scene_dex3.xml

@@ -4,7 +4,8 @@
 
 The Unitree R1 in Gazebo (gz-sim), in the 0.5 ms world. The simulated model is
 `urdf/r1_gazebo.urdf` (`make_gazebo_urdf.py`): the contact geometry of `unitree_mujoco` (feet boxes
-and spheres instead of meshes) and the motor inertia.
+and spheres instead of meshes) and the motor inertia. The R1 with Dex3-1 hands and stock colours (`model:=dex3`) is only
+in MuJoCo for now ([R1 in MuJoCo](r1_mujoco.md#6-the-r1-with-dex3-1-hands)).
 
 | Walking forward (`locomotion_lipm`) |
 |:---:|

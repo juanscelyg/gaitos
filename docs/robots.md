@@ -6,7 +6,7 @@
 |---|---|---|---|
 | Joints | 12 | 26 | 25 actuated (`RHipYawPitch` mimics `LHipYawPitch`) |
 | URDF | unitree_ros `go2_description` (+ Gazebo variant) | unitree_ros `r1_description` (+ Gazebo variant) | ros-naoqi `nao_robot` (V5 kinematics and masses, V6 motor limits; + simulation variant) |
-| MuJoCo model | unitree_mujoco `go2` | unitree_mujoco `r1` | `make_mjcf.py` from the simulation variant and the Fuel meshes |
+| MuJoCo model | unitree_mujoco `go2` | unitree_mujoco `r1`; `r1_dex3.xml` with Dex3-1 hands and stock colours (`model:=dex3`) | `make_mjcf.py` from the simulation variant and the Fuel meshes |
 | Motors | `PdPassthrough` | `PdPassthrough` | `PositionServo` (stiffness 0..1; in simulation a PD servo, `servo: {kp, kd}`) |
 | Contacts | foot_force / simulator forces | joint torques (real), simulator forces | FSR (simulator forces) |
 | Backends | MuJoCo, Gazebo, unitree_sdk2 | MuJoCo, Gazebo, unitree_sdk2 | MuJoCo, Gazebo, `FakeHardware` (NAOqi backend to be written) |

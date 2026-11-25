@@ -9,10 +9,11 @@ parameters.
 
 | | Go2 | R1 | NAO |
 |---|:---:|:---:|:---:|
-| **MuJoCo** | [![Go2 standing up, trotting and turning in MuJoCo](docs/media/go2_mujoco_walk.gif)](docs/tutorials/go2_mujoco.md) | [![R1 walking with the ZMP / LIPM controller in MuJoCo](docs/media/r1_mujoco_walk.gif)](docs/tutorials/r1_mujoco.md) | [![NAO standing up, walking and turning in MuJoCo, with its meshes](docs/media/nao_mujoco_walk.gif)](docs/tutorials/nao_mujoco.md) |
+| **MuJoCo** | [![Go2 standing up, trotting and turning in MuJoCo](docs/media/go2_mujoco_walk.gif)](docs/tutorials/go2_mujoco.md) | [![R1 with Dex3-1 hands and its stock colours walking with the ZMP / LIPM controller in MuJoCo](docs/media/r1_mujoco_walk.gif)](docs/tutorials/r1_mujoco.md) | [![NAO standing up, walking and turning in MuJoCo, with its meshes](docs/media/nao_mujoco_walk.gif)](docs/tutorials/nao_mujoco.md) |
 | **Gazebo** | [![Go2 standing up and trotting in Gazebo](docs/media/go2_gazebo_walk.gif)](docs/tutorials/go2_gazebo.md) | [![R1 walking in Gazebo](docs/media/r1_gazebo_walk.gif)](docs/tutorials/r1_gazebo.md) | [![NAO walking and turning in Gazebo, with its meshes](docs/media/nao_gazebo_walk.gif)](docs/tutorials/nao_gazebo.md) |
 
-- **Robots**: Unitree **Go2** (quadruped) and **R1** (humanoid), plus the **NAO** (V6 motors)
+- **Robots**: Unitree **Go2** (quadruped) and **R1** (humanoid; in MuJoCo also with its Dex3-1
+  hands and stock colours, `model:=dex3`), plus the **NAO** (V6 motors)
   as a third robot added with its URDF, an SRDF and parameter files; it stands, walks and turns
   in MuJoCo and Gazebo.
 - **Simulators**: **MuJoCo** (in the node, lockstep, publishes `/clock`) and **Gazebo**

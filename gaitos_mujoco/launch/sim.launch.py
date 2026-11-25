@@ -4,6 +4,9 @@
 
     ros2 launch gaitos_mujoco sim.launch.py robot:=go2 [rviz:=true]
     ros2 service call /go2/mode/stand_up std_srvs/srv/Trigger
+
+model:=<variant> picks another model of the robot: params/<robot>_<variant>_mujoco.yaml and
+urdf/<robot>_<variant>.urdf (robot:=r1 model:=dex3, the R1 with Dex3-1 hands).
 """
 import importlib.util
 import os
@@ -26,20 +29,29 @@ def gaitos_launch():
 def launch_setup(context):
     robot = LaunchConfiguration('robot').perform(context)
     namespace = LaunchConfiguration('namespace').perform(context) or robot
+    variant = LaunchConfiguration('model').perform(context)
     extra = [p.strip() for p in LaunchConfiguration('params').perform(context).split(',')]
-    params = [os.path.join(get_package_share_directory('gaitos_mujoco'), 'params',
-                           f'{robot}_mujoco.yaml')] + extra
+    share = os.path.join(get_package_share_directory('gaitos_mujoco'), 'params')
+    params = [os.path.join(share, f'{robot}_mujoco.yaml')]
+    if variant:
+        params.append(os.path.join(share, f'{robot}_{variant}_mujoco.yaml'))
+        if not os.path.exists(params[-1]):
+            raise RuntimeError(f'no model {variant} for {robot}: {params[-1]} not found')
+    params += extra
     return gaitos_launch().gaitos_nodes(
         robot, namespace, params, use_sim_time=True,
         rviz=LaunchConfiguration('rviz').perform(context) == 'true',
         overrides={'publish_clock': True,
                    'real_time_factor': float(LaunchConfiguration('real_time_factor').perform(context))},
-        state_publisher=LaunchConfiguration('robot_state_publisher').perform(context) == 'true')
+        state_publisher=LaunchConfiguration('robot_state_publisher').perform(context) == 'true',
+        variant=variant)
 
 
 def generate_launch_description():
     return LaunchDescription([
-        DeclareLaunchArgument('robot', default_value='go2', description='go2, r1'),
+        DeclareLaunchArgument('robot', default_value='go2', description='go2, r1, nao'),
+        DeclareLaunchArgument('model', default_value='',
+                              description='model variant: dex3 (robot:=r1, Dex3-1 hands)'),
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('params', default_value='', description='extra parameter files'),
         DeclareLaunchArgument('real_time_factor', default_value='1.0'),

@@ -42,12 +42,24 @@ ros2 topic pub -r 10 /r1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.3}}"
 | `/dex3/{left,right}/cmd` → `/dex3/{left,right}/state` (`unitree_hg/HandCmd`, `HandState`), with `dex3:=true` | kinematic Dex3-1 hands (`Dex3Hand`): each motor with stiffness follows its command as a first-order lag, within its speed and joint range; no pressure, no faults. The simulated R1 has no hands, so nothing is grasped ([`params/r1_dex3.yaml`](../gaitos_unitree_sim/params/r1_dex3.yaml)) |
 
 ```bash
-ros2 launch gaitos_unitree_sim sim.launch.py robot:=r1 bringup:=true arm_sdk:=true dex3:=true
+ros2 launch gaitos_unitree_sim sim.launch.py robot:=r1 bringup:=true arm_sdk:=true dex3:=true [model:=dex3]
 ```
 
 The walking is the gaitos LIPM: unitree_r1 asks for at least 0.3 m/s, the controller caps it at
-0.15 m/s. The MuJoCo R1 has no hands: a gravity compensation computed with the Dex3 masses (e.g.
-unitree_r1's r1_arm) over-compensates the arms there.
+0.15 m/s. By default the simulated R1 has no hands: a gravity compensation computed with the
+Dex3 masses (e.g. unitree_r1's r1_arm) over-compensates the arms there. `model:=dex3` (MuJoCo
+only) simulates the R1 with its Dex3-1 hands (`gaitos_mujoco model:=dex3`): their mass and look,
+with the stand pose of `srdf/r1_dex3.srdf`. Its fingers do not follow `/dex3`, which stays
+kinematic.
+
+The balance of `balance_stand` (FSM 811 while not walking) has no feedback of the centre of mass: an
+arm held well forward through `arm_sdk` (left shoulder pitch −0.8 rad) tips the R1 over, with or
+without hands; −0.3 rad holds. On the robot the Unitree controller compensates it.
+
+unitree_r1's `r1_control.launch.py` (r1_arm, r1_hand) runs against this interface, but on rolling
+its spawners need `--param-file` with its `controllers.yaml`: without it the trajectory controllers
+fail to load (`joints` empty), since the controllers no longer take their parameters from the
+controller manager's file.
 
 **Go2** (`UnitreeGoEmulator`). gaitos also publishes its own state in `/gaitos` (TF,
 joint_states, robot_state_publisher). The sport service takes the JSON of the official

@@ -18,21 +18,26 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
-def description(robot):
+def description(robot, variant=''):
+    """The URDF and SRDF of a robot; `variant` picks urdf/<robot>_<variant>.urdf (e.g. r1_dex3)
+    and srdf/<robot>_<variant>.srdf when the variant has its own (other poses)"""
     base = os.path.join(get_package_share_directory('gaitos_description'), 'robots',
                         f'{robot}_description')
-    with open(os.path.join(base, 'urdf', f'{robot}.urdf')) as f:
+    with open(os.path.join(base, 'urdf', f'{robot}_{variant}.urdf' if variant else f'{robot}.urdf')) as f:
         urdf = f.read()
-    with open(os.path.join(base, 'srdf', f'{robot}.srdf')) as f:
+    srdf_path = os.path.join(base, 'srdf', f'{robot}_{variant}.srdf')
+    if not variant or not os.path.exists(srdf_path):
+        srdf_path = os.path.join(base, 'srdf', f'{robot}.srdf')
+    with open(srdf_path) as f:
         srdf = f.read()
     return base, urdf, srdf
 
 
 def gaitos_nodes(robot, namespace, extra_params, use_sim_time=False, rviz=False, overrides=None,
-                 state_publisher=True):
+                 state_publisher=True, variant=''):
     """Nodes of one robot: gaitos_node, robot_state_publisher (unless another stack publishes
     the robot state) and optionally RViz"""
-    base, urdf, srdf = description(robot)
+    base, urdf, srdf = description(robot, variant)
     params = [os.path.join(get_package_share_directory('gaitos'), 'params', 'gaitos.yaml'),
               os.path.join(base, 'config', f'{robot}.yaml')]
     params += [p for p in extra_params if p]
